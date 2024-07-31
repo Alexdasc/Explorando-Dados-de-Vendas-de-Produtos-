@@ -1,0 +1,176 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests
+from io import StringIO
+import random
+
+def carregar_dados(url, tipo_arquivo='CSV'):
+    try:
+        if 'drive.google.com' in url:
+            file_id = url.split('/')[-2]
+            download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+            response = requests.get(download_url).content
+            df = pd.read_csv(StringIO(response.decode('utf-8')))
+        else:
+            df = pd.read_csv(url)
+        return df
+    except Exception as e:
+        print(f"Erro ao carregar os dados: {e}")
+        return None
+
+def tratar_dados_faltantes(df):
+    print("\nTratamento de dados faltantes:")
+    missing_data = df.isnull().sum()
+    print(missing_data[missing_data > 0])
+    df = df.dropna()  # Removendo linhas com valores faltantes
+    return df
+
+def analise_exploratoria(df, save_fig=False):
+    df = tratar_dados_faltantes(df)
+
+    print("Primeiras linhas do DataFrame:")
+    print(df.head())
+    
+    print("\nInformações sobre o DataFrame:")
+    print(df.info())
+    
+    print("\nEstatísticas descritivas das variáveis numéricas:")
+    print(df.describe())
+    
+    # Plotar histograma
+    plot_histograma(df, save_fig)
+    
+    # Plotar gráfico de barras
+    plot_grafico_de_barras(df, save_fig)
+    
+    # Plotar gráfico de pizza
+    plot_grafico_de_pizza(df, save_fig)
+    
+   
+    # Plotar gráfico de dispersão
+    plot_grafico_de_dispersao(df, save_fig)
+    
+    # Plotar boxplot
+    plot_boxplot(df, save_fig)
+    
+    # Plotar matriz de correlação
+    identificacao_correlacoes(df, save_fig)
+
+def plot_histograma(df, save_fig):
+    print("\nHistograma:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 0:
+        col = random.choice(numeric_columns)
+        sns.histplot(data=df, x=col, kde=True)
+        plt.title('Histograma - Distribuição dos Dados')
+        plt.xlabel(col)
+        plt.ylabel('Frequência')
+        if save_fig:
+            plt.savefig(f'histograma_{col}.png')
+        plt.show()
+    else:
+        print("Não há variáveis numéricas para plotar o histograma.")
+
+def plot_grafico_de_barras(df, save_fig):
+    print("\nGráfico de Barras:")
+    categorical_columns = df.select_dtypes(include=['object']).columns
+    if len(categorical_columns) > 0:
+        col = random.choice(categorical_columns)
+        if df[col].nunique() > 1:  
+            sns.countplot(data=df, x=col)
+            plt.title('Gráfico de Barras - Contagem por Categoria')
+            plt.xlabel(col)
+            plt.ylabel('Contagem')
+            if save_fig:
+                plt.savefig(f'barra_{col}.png')
+            plt.show()
+        else:
+            print(f"Não há dados únicos suficientes para a variável '{col}' para plotar o gráfico de barras.")
+    else:
+        print("Não há variáveis categóricas para plotar o gráfico de barras.")
+
+def plot_grafico_de_pizza(df, save_fig):
+    print("\nGráfico de Pizza:")
+    categorical_columns = df.select_dtypes(include=['object']).columns
+    if len(categorical_columns) > 0:
+        col = random.choice(categorical_columns)
+        counts = df[col].value_counts()
+        if counts.nunique() > 1: 
+            plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+            plt.title('Gráfico de Pizza - Distribuição de Categorias')
+            if save_fig:
+                plt.savefig(f'pizza_{col}.png')
+            plt.show()
+        else:
+            print(f"A variável '{col}' não possui diversidade de valores suficiente para plotar o gráfico de pizza.")
+    else:
+        print("Não há variáveis categóricas para plotar o gráfico de pizza.")
+
+
+def plot_grafico_de_dispersao(df, save_fig):
+    print("\nGráfico de Dispersão:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 1:
+        cols = random.sample(list(numeric_columns), 2)
+        sns.scatterplot(data=df, x=cols[0], y=cols[1])
+        plt.title('Gráfico de Dispersão - Relação entre Variáveis')
+        plt.xlabel(cols[0])
+        plt.ylabel(cols[1])
+        if save_fig:
+            plt.savefig(f'dispersao_{cols[0]}_{cols[1]}.png')
+        plt.show()
+    else:
+        print("Não há duas variáveis numéricas para plotar o gráfico de dispersão.")
+
+def plot_boxplot(df, save_fig):
+    print("\nBoxplot:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 0:
+        sns.boxplot(data=df[numeric_columns])
+        plt.title('Boxplot - Distribuição e Dispersão dos Dados')
+        plt.ylabel('Valores')
+        if save_fig:
+            plt.savefig('boxplot.png')
+        plt.show()
+    else:
+        print("Não há variáveis numéricas para plotar o boxplot.")
+
+def identificacao_correlacoes(df, save_fig):
+    print("\nMatriz de Correlação:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 1:
+        sns.heatmap(df[numeric_columns].corr(), annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+        plt.title('Matriz de Correlação - Relação entre Variáveis Numéricas')
+        if save_fig:
+            plt.savefig('correlacao.png')
+        plt.show()
+    else:
+        print("Não há correlações a serem identificadas com menos de duas variáveis numéricas.")
+
+def analise_especialista():
+    print("\nAnálise especializada:")
+    print("Essa é a análise especializada do assunto.")
+    print("Você pode adicionar suas próprias conclusões e insights aqui.")
+
+def main(urls, save_fig=False):
+    for url in urls:
+        df = carregar_dados(url)
+        if df is not None:
+            print("\nAnálise exploratória para o arquivo:", url)
+            analise_exploratoria(df, save_fig)
+            print("\n---")
+
+    analise_especialista()
+
+# URLs dos arquivos de dados
+urls = [
+    "https://drive.google.com/file/d/1ZPJ1lw7O9NQ31JBJqSrt85eykvt6lAoq/view?usp=sharing "
+
+    # Adicione mais URLs aqui...
+]
+
+# Executar a análise de dados com a opção de salvar gráficos ativada
+main(urls, save_fig=True)
+
+
