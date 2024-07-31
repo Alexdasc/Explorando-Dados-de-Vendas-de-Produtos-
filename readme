@@ -1,0 +1,67 @@
+## README
+
+# Análise de Dados de Vendas de Produtos em uma Loja Virtual
+
+Este projeto realiza uma análise exploratória e visualização de dados de vendas de produtos em uma loja virtual. Utilizando uma variedade de técnicas de visualização, como histogramas, gráficos de barras, gráficos de pizza, gráficos de dispersão, boxplots e matrizes de correlação, exploramos padrões, tendências e relações entre diferentes variáveis do conjunto de dados.
+
+### Funcionalidades
+
+1. **Carregamento de Dados**:
+   - A função `carregar_dados` permite carregar dados a partir de URLs do Google Drive ou URLs diretas para arquivos CSV.
+   - Para arquivos hospedados no Google Drive, é necessário fornecer o URL de compartilhamento. A função extrai o ID do arquivo e realiza o download para a leitura dos dados.
+
+2. **Tratamento de Dados Faltantes**:
+   - A função `tratar_dados_faltantes` identifica e remove linhas com dados faltantes do DataFrame.
+
+3. **Análise Exploratória**:
+   - A função `analise_exploratoria` exibe as primeiras linhas dos dados, informações sobre o DataFrame e estatísticas descritivas das variáveis numéricas.
+   - Visualizações são geradas para entender a distribuição dos dados e identificar padrões.
+
+4. **Visualizações de Dados**:
+   - **Histograma**: Mostra a distribuição de uma variável numérica.
+   - **Gráfico de Barras**: Mostra a contagem de categorias para variáveis categóricas.
+   - **Gráfico de Pizza**: Mostra a distribuição percentual de categorias.
+   - **Gráfico de Dispersão**: Visualiza a relação entre duas variáveis numéricas.
+   - **Boxplot**: Exibe a distribuição e dispersão dos dados numéricos.
+   - **Matriz de Correlação**: Identifica correlações entre variáveis numéricas.
+
+5. **Análise Especializada**:
+   - A função `analise_especialista` permite a inclusão de conclusões e insights personalizados sobre os dados analisados.
+
+### Como Utilizar
+
+1. **Preparação do Ambiente**:
+   - Certifique-se de ter instalado as seguintes bibliotecas: `pandas`, `matplotlib`, `seaborn`, `requests`.
+
+2. **Execução**:
+   - Defina as URLs dos arquivos de dados no formato de compartilhamento do Google Drive ou URLs diretas de arquivos CSV.
+   - Execute a função `main(urls, save_fig=False)` onde `urls` é uma lista das URLs dos arquivos de dados. O parâmetro `save_fig` indica se os gráficos gerados devem ser salvos como arquivos PNG.
+
+3. **Salvamento de Gráficos**:
+   - Se o parâmetro `save_fig` for definido como `True`, os gráficos serão salvos no diretório corrente com nomes que indicam o tipo de gráfico e a variável correspondente.
+
+### Exemplo de Uso
+
+```python
+# URLs dos arquivos de dados
+urls = [
+    "https://drive.google.com/file/d/1ZPJ1lw7O9NQ31JBJqSrt85eykvt6lAoq/view?usp=sharing"
+    # Adicione mais URLs aqui...
+]
+
+# Executar a análise de dados com a opção de salvar gráficos ativada
+main(urls, save_fig=True)
+```
+
+### Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para melhorar o código, adicionar novas funcionalidades ou corrigir bugs. Para contribuir, faça um fork deste repositório, crie uma branch para suas alterações e envie um pull request.
+
+### Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+
+---
+
+Esse README fornece uma visão geral clara e informativa sobre o projeto, suas funcionalidades, como utilizá-lo e como contribuir.
